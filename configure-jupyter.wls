@@ -3,13 +3,13 @@
 Begin["WolframLanguageForJupyter`Private`"];
 
 notfound = "configure-jupyter.wls: Jupyter installation on Environment[\"PATH\"] not found.";
-isdir = "configure-jupyter.wls: Provided Jupyter binary path is a directory. Please provide the path to the Jupyter binary."
-nobin = "configure-jupyter.wls: Provided Jupyter binary path does not exist.";
-isdirMath = "configure-jupyter.wls: Provided Wolfram Engine binary path is a directory. Please provide the path to the Wolfram Engine binary."
-nobinMath = "configure-jupyter.wls: Provided Wolfram Engine binary path does not exist.";
 notadded = "configure-jupyter.wls: An error has occurred. The desired Wolfram Engine is not in \"jupyter kernelspec list.\"";
 notremoved = "configure-jupyter.wls: An error has occurred: Wolfram Engine(s) still in \"jupyter kernelspec list.\"";
 addconflict = "configure-jupyter.wls: An error has occurred. A Wolfram Engine with the same $VersionNumber of the target Wolfram Engine is in \"jupyter kernelspec list.\" Attempting to overwrite ...";
+configureJupyter::isdir = "configure-jupyter.wls: Provided Jupyter binary path (``) is a directory. Please provide the path to the Jupyter binary."
+configureJupyter::nobin = "configure-jupyter.wls: Provided Jupyter binary path (``) does not exist.";
+configureJupyter::isdirMath = "configure-jupyter.wls: Provided Wolfram Engine binary path (``) is a directory. Please provide the path to the Wolfram Engine binary."
+configureJupyter::nobinMath = "configure-jupyter.wls: Provided Wolfram Engine binary path (``) does not exist.";
 (* removeconflict = "configure-jupyter.wls: An error has occurred. The Wolfram Engine(s) to be removed is/are not in \"jupyter kernelspec list.\""; *)
 removeconflict = "";
 nopaclet = "configure-jupyter.wls: WolframLanguageForJupyter paclet source not detected. Are you running the script in the root project directory?";
@@ -234,7 +234,7 @@ configureJupyter[specs_Association, removeQ_?BooleanQ, removeAllQ_?BooleanQ] :=
 			jupyterPath = findJupyterPath[];
 			(* if Jupyter not on PATH, message *)
 			If[MissingQ[jupyterPath],
-				Print[notfound];
+				Message[configureJupyter::notfound, jupyterPath];
 				Return[$Failed];
 			];
 			jupyterPath = FileNameJoin[{jupyterPath, StringJoin["jupyter", fileExt]}];
@@ -254,9 +254,9 @@ configureJupyter[specs_Association, removeQ_?BooleanQ, removeAllQ_?BooleanQ] :=
 			Switch[
 				fileType,
 				Directory,
-				Print[isdir];,
+				Message[configureJupyter::isdir, jupyterPath];,
 				None,
-				Print[nobin];
+				Message[configureJupyter::nobin, jupyterPath];
 			];
 			Return[$Failed];
 		];
@@ -274,9 +274,9 @@ configureJupyter[specs_Association, removeQ_?BooleanQ, removeAllQ_?BooleanQ] :=
 				Switch[
 					fileType,
 					Directory,
-					Print[isdirMath];,
+					Message[configureJupyter::isdirMath,mathBin];,
 					None,
-					Print[nobinMath];
+					Message[configureJupyter::nobinMath,mathBin];
 				];
 				Return[$Failed];
 			];
